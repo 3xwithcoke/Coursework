@@ -1,0 +1,193 @@
+"""
+Question 4: Smart Energy Grid – Load Distribution Optimization
+
+Problem:
+A smart energy grid has multiple power sources, each with a certain cost
+per unit of electricity and a maximum production capacity.
+
+Given the electricity demand for a specific hour, determine how to
+distribute the load among the available power sources so that the total
+cost of electricity generation is minimized.
+
+Logic:
+We use a Greedy Optimization Strategy.
+
+Steps:
+1. Sort all power sources by their cost per unit (ascending order).
+2. Allocate electricity from the cheapest source first.
+3. Continue allocating power until either:
+   - the demand is satisfied, or
+   - the source reaches its capacity.
+4. Move to the next cheapest source until the total demand is fulfilled.
+
+This approach ensures that electricity is generated at the lowest possible cost.
+"""
+
+from typing import List, Tuple
+
+
+def optimize_load_distribution(sources: List[Tuple[str, int, float]], demand: int):
+    """
+    Optimizes power distribution among sources.
+
+    Args:
+        sources: A list of tuples containing
+                 (source_name, capacity, cost_per_unit)
+        demand: Total electricity demand.
+
+    Returns:
+        allocation: list of (source_name, units_used)
+        total_cost: minimum total generation cost
+    """
+
+    # Sort sources by cost per unit
+    sources_sorted = sorted(sources, key=lambda x: x[2])
+
+    allocation = []
+    total_cost = 0
+    remaining_demand = demand
+
+    for name, capacity, cost in sources_sorted:
+        if remaining_demand <= 0:
+            break
+
+        used = min(capacity, remaining_demand)
+
+        allocation.append((name, used))
+        total_cost += used * cost
+
+        remaining_demand -= used
+
+    if remaining_demand > 0:
+        print("Warning: Demand could not be fully satisfied.")
+
+    return allocation, total_cost
+
+
+def main():
+    """
+    Main function to demonstrate the smart grid optimization.
+    """
+
+    print("--- Question 4: Smart Energy Grid Load Optimization ---")
+
+    # Example power sources
+    # Format: (Source Name, Capacity, Cost per Unit)
+    power_sources = [
+        ("Solar Plant", 50, 2.0),
+        ("Wind Farm", 40, 2.5),
+        ("Hydropower", 60, 3.0),
+        ("Diesel Generator", 100, 5.0)
+    ]
+
+    demand = 120
+
+    allocation, cost = optimize_load_distribution(power_sources, demand)
+
+    print(f"Total Demand: {demand}\n")
+
+    print("Power Allocation:")
+    for source, units in allocation:
+        print(f"{source}: {units} units")
+
+    print(f"\nTotal Minimum Cost: {cost}")
+
+
+if __name__ == "__main__":
+    main()"""
+Question 4: Smart Energy Grid – Load Distribution Optimization
+
+Problem:
+A smart energy grid has multiple power sources, each with a certain cost
+per unit of electricity and a maximum production capacity.
+
+Given the electricity demand for a specific hour, determine how to
+distribute the load among the available power sources so that the total
+cost of electricity generation is minimized.
+
+Logic:
+We use a Greedy Optimization Strategy.
+
+Steps:
+1. Sort all power sources by their cost per unit (ascending order).
+2. Allocate electricity from the cheapest source first.
+3. Continue allocating power until either:
+   - the demand is satisfied, or
+   - the source reaches its capacity.
+4. Move to the next cheapest source until the total demand is fulfilled.
+
+This approach ensures that electricity is generated at the lowest possible cost.
+"""
+
+from typing import List, Tuple
+
+
+def optimize_load_distribution(sources: List[Tuple[str, int, float]], demand: int):
+    """
+    Optimizes power distribution among sources.
+
+    Args:
+        sources: A list of tuples containing
+                 (source_name, capacity, cost_per_unit)
+        demand: Total electricity demand.
+
+    Returns:
+        allocation: list of (source_name, units_used)
+        total_cost: minimum total generation cost
+    """
+
+    # Sort sources by cost per unit
+    sources_sorted = sorted(sources, key=lambda x: x[2])
+
+    allocation = []
+    total_cost = 0
+    remaining_demand = demand
+
+    for name, capacity, cost in sources_sorted:
+        if remaining_demand <= 0:
+            break
+
+        used = min(capacity, remaining_demand)
+
+        allocation.append((name, used))
+        total_cost += used * cost
+
+        remaining_demand -= used
+
+    if remaining_demand > 0:
+        print("Warning: Demand could not be fully satisfied.")
+
+    return allocation, total_cost
+
+
+def main():
+    """
+    Main function to demonstrate the smart grid optimization.
+    """
+
+    print("--- Question 4: Smart Energy Grid Load Optimization ---")
+
+    # Example power sources
+    # Format: (Source Name, Capacity, Cost per Unit)
+    power_sources = [
+        ("Solar Plant", 50, 2.0),
+        ("Wind Farm", 40, 2.5),
+        ("Hydropower", 60, 3.0),
+        ("Diesel Generator", 100, 5.0)
+    ]
+
+    demand = 120
+
+    allocation, cost = optimize_load_distribution(power_sources, demand)
+
+    print(f"Total Demand: {demand}\n")
+
+    print("Power Allocation:")
+    for source, units in allocation:
+        print(f"{source}: {units} units")
+
+    print(f"\nTotal Minimum Cost: {cost}")
+
+
+if __name__ == "__main__":
+    main()

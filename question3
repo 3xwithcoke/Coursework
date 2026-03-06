@@ -1,0 +1,127 @@
+"""
+Question 3: Maximum Profit with At Most K Transactions
+
+Problem:
+You are given a list of stock prices where prices[i] represents the stock price
+on day i. You are also given an integer k representing the maximum number of
+transactions allowed.
+
+A transaction consists of buying and then selling one stock. You cannot hold
+multiple stocks at the same time (you must sell before buying again).
+
+The goal is to calculate the maximum profit that can be achieved with at most
+k transactions.
+
+Logic:
+We use Dynamic Programming (DP).
+
+Let:
+dp[t][i] = maximum profit using at most t transactions up to day i.
+
+Two choices exist for each day:
+1. Do nothing on day i → profit remains dp[t][i-1]
+2. Sell stock on day i → prices[i] + best previous buy
+
+To optimize performance, we maintain a variable 'best_buy' that stores the
+maximum value of (dp[t-1][j] - prices[j]) for previous days. This avoids
+recalculating the maximum in an inner loop and keeps the algorithm efficient.
+"""
+
+from typing import List
+
+
+def max_profit_k_transactions(prices: List[int], k: int) -> int:
+    """
+    Calculates the maximum profit with at most k transactions.
+
+    Args:
+        prices: List of stock prices.
+        k: Maximum number of transactions allowed.
+
+    Returns:
+        Maximum achievable profit.
+    """
+
+    n = len(prices)
+
+    if n == 0 or k == 0:
+        return 0
+
+    # If k is large, treat it as unlimited transactions
+    if k >= n // 2:
+        profit = 0
+        for i in range(1, n):
+            if prices[i] > prices[i - 1]:
+                profit += prices[i] - prices[i - 1]
+        return profit
+
+    dp_prev = [0] * n
+
+    for t in range(1, k + 1):
+        dp_curr = [0] * n
+        best_buy = -prices[0]
+
+        for i in range(1, n):
+            dp_curr[i] = max(dp_curr[i - 1], prices[i] + best_buy)
+            best_buy = max(best_buy, dp_prev[i] - prices[i])
+
+        dp_prev = dp_curr
+
+    return dp_prev[-1]
+
+
+def main():
+    """
+    Main function to run example test cases.
+    """
+
+    print("--- Question 3: Maximum Profit with K Transactions ---")
+
+    # Example 1
+    prices1 = [2, 4, 1]
+    k1 = 2
+    result1 = max_profit_k_transactions(prices1, k1)
+
+    print(f"Input Prices: {prices1}, k = {k1}")
+    print(f"Output: {result1}")
+    print("Expected: 2\n")
+
+    # Example 2
+    prices2 = [3, 2, 6, 5, 0, 3]
+    k2 = 2
+    result2 = max_profit_k_transactions(prices2, k2)
+
+    print(f"Input Prices: {prices2}, k = {k2}")
+    print(f"Output: {result2}")
+    print("Expected: 7\n")
+
+    # Example 3 (No profit case)
+    prices3 = [7, 6, 4, 3, 1]
+    k3 = 2
+    result3 = max_profit_k_transactions(prices3, k3)
+
+    print(f"Input Prices: {prices3}, k = {k3}")
+    print(f"Output: {result3}")
+    print("Expected: 0\n")
+
+    # Example 4 (Increasing prices)
+    prices4 = [1, 2, 3, 4, 5]
+    k4 = 2
+    result4 = max_profit_k_transactions(prices4, k4)
+
+    print(f"Input Prices: {prices4}, k = {k4}")
+    print(f"Output: {result4}")
+    print("Expected: 4\n")
+
+    # Example 5 (Empty list)
+    prices5 = []
+    k5 = 3
+    result5 = max_profit_k_transactions(prices5, k5)
+
+    print(f"Input Prices: {prices5}, k = {k5}")
+    print(f"Output: {result5}")
+    print("Expected: 0\n")
+
+
+if __name__ == "__main__":
+    main()

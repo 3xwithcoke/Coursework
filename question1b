@@ -1,0 +1,93 @@
+"""
+Question 1b: Keyword Segmentation
+
+Problem:
+Given a continuous user search string user_query and a marketing_keywords_dictionary
+(a list of valid marketing terms), break the user_query into all possible sentences
+where each word is a valid keyword from the dictionary.
+
+Logic:
+We use recursion with memoization (Dynamic Programming) to solve this problem.
+The function break_word takes the remaining string and tries to match the beginning
+of the string with words in the dictionary. If a match is found, it recursively
+calls itself with the rest of the string.
+"""
+
+from typing import List, Dict
+
+def keyword_segmentation(user_query: str, marketing_keywords_dictionary: List[str]) -> List[str]:
+    """
+    Breaks a continuous string into all possible sentences based on a dictionary.
+
+    Args:
+        user_query: The continuous string to break.
+        marketing_keywords_dictionary: A list of valid keywords.
+
+    Returns:
+        A list of all possible valid sentences.
+    """
+    # Convert list to set for O(1) lookups
+    word_set = set(marketing_keywords_dictionary)
+    memo: Dict[str, List[str]] = {}
+
+    def backtrack(query: str) -> List[str]:
+        """
+        Recursive helper function with memoization.
+        """
+        if query in memo:
+            return memo[query]
+
+        if not query:
+            return [""]
+
+        result = []
+        for i in range(1, len(query) + 1):
+            prefix = query[:i]
+            if prefix in word_set:
+                suffixes = backtrack(query[i:])
+                for suffix in suffixes:
+                    if suffix:
+                        result.append(prefix + " " + suffix)
+                    else:
+                        result.append(prefix)
+        
+        memo[query] = result
+        return result
+
+    return backtrack(user_query)
+
+def main():
+    """
+    Main function to run examples from the problem description.
+    """
+    print("--- Question 1b: Keyword Segmentation ---")
+
+    # Example 1
+    query1 = "nepaltrekkingguide"
+    dict1 = ["nepal", "trekking", "guide", "nepaltrekking"]
+    print(f"Example 1 Input: '{query1}'")
+    print(f"Dictionary: {dict1}")
+    result1 = keyword_segmentation(query1, dict1)
+    print(f"Output: {result1}")
+    print("Expected: ['nepal trekking guide', 'nepaltrekking guide']\n")
+
+    # Example 2
+    query2 = "visitkathmandunepal"
+    dict2 = ["visit", "kathmandu", "nepal", "visitkathmandu", "kathmandunepal"]
+    print(f"Example 2 Input: '{query2}'")
+    print(f"Dictionary: {dict2}")
+    result2 = keyword_segmentation(query2, dict2)
+    print(f"Output: {result2}")
+    print("Expected: ['visit kathmandu nepal', 'visitkathmandu nepal', 'visit kathmandunepal']\n")
+
+    # Example 3
+    query3 = "everesthikingtrail"
+    dict3 = ["everest", "hiking", "trek"]
+    print(f"Example 3 Input: '{query3}'")
+    print(f"Dictionary: {dict3}")
+    result3 = keyword_segmentation(query3, dict3)
+    print(f"Output: {result3}")
+    print("Expected: []\n")
+
+if _name_ == "_main_":
+    main()

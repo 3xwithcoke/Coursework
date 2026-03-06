@@ -1,0 +1,122 @@
+"""
+Question 1a: Signal Repeater Placement
+
+Problem:
+Given a list of customer_locations, where customer_locations[i] = [x_coordinate, y_coordinate]
+represents the coordinates of a customer's home on a grid, determine the maximum number
+of customer homes that can be covered by a single, straight line-of-sight signal path.
+
+Logic:
+We iterate through each point and calculate the slope between that point and every other point.
+We use a hash map to store the frequency of each slope. The maximum frequency for a given
+point (plus the point itself) gives the max points on a line passing through that point.
+We track the global maximum across all starting points.
+"""
+
+from typing import List, Tuple, Dict
+from math import gcd
+
+def calculate_slope(p1: List[int], p2: List[int]) -> Tuple[int, int]:
+    """
+    Calculates the slope between two points p1 and p2 in irreducible fraction form.
+
+    Args:
+        p1: The first point [x, y].
+        p2: The second point [x, y].
+
+    Returns:
+        A tuple (dy, dx) representing the slope.
+        Returns (1, 0) for vertical lines and (0, 1) for horizontal lines.
+        Signs are normalized to ensure consistency.
+    """
+    dx = p2[0] - p1[0]
+    dy = p2[1] - p1[1]
+
+    if dx == 0:
+        return (1, 0)  # Vertical line
+    if dy == 0:
+        return (0, 1)  # Horizontal line
+
+    common = gcd(abs(dx), abs(dy))
+    dx //= common
+    dy //= common
+
+    # Normalize signs: ensure dx is always positive for consistency,
+    # or if dx is 0 (vertical), dy is positive.
+    if dx < 0:
+        dx = -dx
+        dy = -dy
+    elif dx == 0 and dy < 0:
+        dy = -dy
+
+    return (dy, dx)
+
+def max_points_on_line(customer_locations: List[List[int]]) -> int:
+    """
+    Finds the maximum number of points that lie on the same straight line.
+
+    Args:
+        customer_locations: A list of points, where each point is [x, y].
+
+    Returns:
+        The maximum number of points on a single line.
+    """
+    n = len(customer_locations)
+    if n <= 2:
+        return n
+
+    max_points = 1
+
+    for i in range(n):
+        slopes: Dict[Tuple[int, int], int] = {}
+        duplicate_points = 0
+        current_max = 0
+
+        for j in range(i + 1, n):
+            p1 = customer_locations[i]
+            p2 = customer_locations[j]
+
+            # Handle duplicate points
+            if p1[0] == p2[0] and p1[1] == p2[1]:
+                duplicate_points += 1
+                continue
+
+            slope = calculate_slope(p1, p2)
+            slopes[slope] = slopes.get(slope, 0) + 1
+            current_max = max(current_max, slopes[slope])
+
+        # The number of points on the line through point i with the most frequent slope
+        # includes point i itself (1) + duplicates + the count of other points with that slope.
+        max_points = max(max_points, current_max + duplicate_points + 1)
+
+    return max_points
+
+def main():
+    """
+    Main function to run examples from the problem description.
+    """
+    print("--- Question 1a: Signal Repeater Placement ---")
+
+    # Example 1
+    locations1 = [[1, 1], [2, 2], [3, 3]]
+    result1 = max_points_on_line(locations1)
+    print(f"Example 1 Input: {locations1}")
+    print(f"Example 1 Output: {result1}")
+    print(f"Expected: 3\n")
+
+    # Example 2
+    locations2 = [[1, 1], [3, 2], [5, 3], [4, 1], [2, 3], [1, 4]]
+    result2 = max_points_on_line(locations2)
+    print(f"Example 2 Input: {locations2}")
+    print(f"Example 2 Output: {result2}")
+    print(f"Expected: 4\n")
+    
+    # Custom Test: Vertical Line
+    locations3 = [[0, 0], [0, 1], [0, 2], [1, 1]]
+    result3 = max_points_on_line(locations3)
+    print(f"Custom (Vertical) Input: {locations3}")
+    print(f"Output: {result3}")
+    print(f"Expected: 3\n")
+
+if _name_ == "_main_":
+    main()
