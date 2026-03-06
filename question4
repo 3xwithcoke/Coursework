@@ -94,7 +94,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()"""
+    main()
+    """
 Question 4: Smart Energy Grid – Load Distribution Optimization
 
 Problem:

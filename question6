@@ -1,0 +1,94 @@
+"""
+Question 6: Road Network Safety – Safest Path Using Dijkstra’s Algorithm
+
+Problem:
+Given a road network represented as a graph where intersections are nodes and roads are edges,
+each road has a risk value representing the probability of accident or danger. The goal is to
+determine the safest path from a source intersection to all other intersections in the network.
+
+Logic:
+We use Dijkstra’s Algorithm to compute the safest path in the graph.
+
+Steps:
+1. Represent the road network using an adjacency list where each node stores its neighboring
+   intersections and the associated risk value.
+
+2. Initialize a distance array where every node has an initial distance of infinity except the
+   source node, which is set to 0.
+
+3. Use a priority queue to always select the node with the smallest accumulated risk.
+
+4. For each neighboring node, compute the new risk value and update it if the newly found
+   path is safer than the previously recorded one.
+
+5. Continue this process until all nodes have been processed.
+
+The final distance values represent the safest risk values from the source to all other nodes
+in the road network.
+"""
+
+import heapq
+
+
+def safest_path(graph, start):
+    """
+    Computes the safest path from a starting node to all other nodes using Dijkstra’s Algorithm.
+
+    Args:
+        graph: Adjacency list representing the graph.
+        start: The starting node.
+
+    Returns:
+        A dictionary containing the safest distance from the start node to all other nodes.
+    """
+
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+
+    priority_queue = [(0, start)]
+
+    while priority_queue:
+
+        current_distance, current_node = heapq.heappop(priority_queue)
+
+        if current_distance > distances[current_node]:
+            continue
+
+        for neighbor, weight in graph[current_node]:
+
+            distance = current_distance + weight
+
+            if distance < distances[neighbor]:
+
+                distances[neighbor] = distance
+                heapq.heappush(priority_queue, (distance, neighbor))
+
+    return distances
+
+
+def main():
+    """
+    Main function to test the safest path algorithm.
+    """
+
+    print("--- Question 6: Road Network Safety ---")
+
+    graph = {
+        'A': [('B', 2), ('C', 4)],
+        'B': [('C', 1), ('D', 7)],
+        'C': [('E', 3)],
+        'D': [('E', 1)],
+        'E': []
+    }
+
+    start_node = 'A'
+
+    result = safest_path(graph, start_node)
+
+    print(f"Safest paths from node {start_node}:")
+    for node, risk in result.items():
+        print(f"{node}: {risk}")
+
+
+if __name__ == "__main__":
+    main()
